@@ -19,6 +19,7 @@ const usuario_service_1 = require("../../application/services/usuario.service");
 const usuario_entity_1 = require("../../infrastructure/entities/usuario.entity");
 const response_helper_1 = require("../../common/helpers/response.helper");
 const transaction_decorator_1 = require("../../common/decorators/transaction.decorator");
+const global_responses_decorator_1 = require("../../common/decorators/global.responses.decorator");
 let UsuarioController = class UsuarioController {
     usuarioService;
     responseHelper;
@@ -43,6 +44,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "obtenerUsuario", null);
 exports.UsuarioController = UsuarioController = __decorate([
+    (0, global_responses_decorator_1.ApiResponseWrapper)(usuario_entity_1.UsuarioExtend),
     (0, swagger_1.ApiTags)('Usuario'),
     (0, common_1.Controller)('usuario'),
     __metadata("design:paramtypes", [usuario_service_1.UsuarioService,

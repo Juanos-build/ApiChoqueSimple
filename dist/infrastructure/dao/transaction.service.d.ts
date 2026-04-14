@@ -1,8 +1,8 @@
 import { Response } from '../../common/response.interface';
 import { UsuarioExtend, Usuario } from '../entities/usuario.entity';
-import { DaoContainer } from '../database/dao.container';
+import { UsuarioDao } from './implementation/usuario/usuario.dao';
 export declare class TransactionService {
-    private readonly dao;
-    constructor(dao: DaoContainer);
+    private readonly usuarioDao;
+    constructor(usuarioDao: UsuarioDao);
     obtenerUsuario(request: Usuario): Promise<Response<UsuarioExtend>>;
 }

@@ -11,19 +11,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionService = void 0;
 const common_1 = require("@nestjs/common");
-const dao_container_1 = require("../database/dao.container");
+const usuario_dao_1 = require("./implementation/usuario/usuario.dao");
 let TransactionService = class TransactionService {
-    dao;
-    constructor(dao) {
-        this.dao = dao;
+    usuarioDao;
+    constructor(usuarioDao) {
+        this.usuarioDao = usuarioDao;
     }
     obtenerUsuario(request) {
-        return this.dao.usuarioDao.obtenerUsuario(request);
+        return this.usuarioDao.obtenerUsuario(request);
     }
 };
 exports.TransactionService = TransactionService;
 exports.TransactionService = TransactionService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [dao_container_1.DaoContainer])
+    __metadata("design:paramtypes", [usuario_dao_1.UsuarioDao])
 ], TransactionService);
 //# sourceMappingURL=transaction.service.js.map
