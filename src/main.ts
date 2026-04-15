@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { TransformInterceptor } from 'src/common/interceptors/transform.interceptor';
 import { LoggerService } from './common/helpers/logger.service';
 import { AllExceptionsFilter } from './common/filters/exception.filter';
-import { ResponseProblem } from './common/models/response-problem';
+import { ResponseProblem } from './common/models/response.problem';
 import { TransactionalInterceptor } from './common/interceptors/transaction.interceptor';
 
 async function bootstrap() {

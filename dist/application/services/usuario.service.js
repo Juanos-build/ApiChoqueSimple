@@ -12,13 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioService = void 0;
 const common_1 = require("@nestjs/common");
 const transaction_service_1 = require("../../infrastructure/dao/transaction.service");
+const usuario_entity_1 = require("../../infrastructure/entities/usuario.entity");
+const mapper_helper_1 = require("../../common/helpers/mapper.helper");
 let UsuarioService = class UsuarioService {
     transactionService;
     constructor(transactionService) {
         this.transactionService = transactionService;
     }
     async obtenerUsuario(request) {
-        return this.transactionService.obtenerUsuario(request);
+        const usuario = (0, mapper_helper_1.mapToClass)(usuario_entity_1.Usuario, request.data);
+        return this.transactionService.obtenerUsuario(usuario);
     }
 };
 exports.UsuarioService = UsuarioService;

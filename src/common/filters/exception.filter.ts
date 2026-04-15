@@ -7,7 +7,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Response as ExpressResponse } from 'express';
-import { ResponseProblem } from '../models/response-problem';
+import { ResponseProblem } from '../models/response.problem';
 import { LoggerService } from '../helpers/logger.service';
 import {
   ResultException,

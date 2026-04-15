@@ -1,9 +1,10 @@
 import { UsuarioService } from '../../application/services/usuario.service';
-import { Usuario, UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
+import { UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
 import { ResponseHelper } from "../../common/helpers/response.helper";
+import * as responseInterface from "../../common/models/response.interface";
 export declare class UsuarioController {
     private readonly usuarioService;
     private readonly responseHelper;
     constructor(usuarioService: UsuarioService, responseHelper: ResponseHelper);
-    obtenerUsuario(request: Usuario): Promise<import("../../common/response.interface").Response<UsuarioExtend>>;
+    obtenerUsuario(request: responseInterface.Request<UsuarioExtend>): Promise<responseInterface.Response<UsuarioExtend | null>>;
 }

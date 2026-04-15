@@ -7,7 +7,7 @@ const swagger_1 = require("@nestjs/swagger");
 const transform_interceptor_1 = require("./common/interceptors/transform.interceptor");
 const logger_service_1 = require("./common/helpers/logger.service");
 const exception_filter_1 = require("./common/filters/exception.filter");
-const response_problem_1 = require("./common/models/response-problem");
+const response_problem_1 = require("./common/models/response.problem");
 const transaction_interceptor_1 = require("./common/interceptors/transaction.interceptor");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);

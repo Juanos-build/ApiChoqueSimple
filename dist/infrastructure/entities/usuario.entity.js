@@ -136,4 +136,12 @@ class UsuarioExtend extends Usuario {
     fechaCreacion;
 }
 exports.UsuarioExtend = UsuarioExtend;
+__decorate([
+    (0, field_decorator_1.Field)(),
+    __metadata("design:type", String)
+], UsuarioExtend.prototype, "rol", void 0);
+__decorate([
+    (0, field_decorator_1.Field)({ example: '2024-01-01T00:00:00' }),
+    __metadata("design:type", Date)
+], UsuarioExtend.prototype, "fechaCreacion", void 0);
 //# sourceMappingURL=usuario.entity.js.map

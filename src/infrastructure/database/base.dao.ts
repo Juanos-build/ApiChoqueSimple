@@ -1,4 +1,4 @@
-import { Response } from 'src/common/response.interface';
+import { Response } from 'src/common/models/response.interface';
 
 export abstract class BaseDao {
   protected async safeExecute<T>(

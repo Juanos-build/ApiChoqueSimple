@@ -53,6 +53,8 @@ export class Usuario {
 }
 
 export class UsuarioExtend extends Usuario {
+  @Field()
   rol?: string;
+  @Field({ example: '2024-01-01T00:00:00' })
   fechaCreacion?: Date;
 }

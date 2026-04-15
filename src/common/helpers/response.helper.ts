@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Response } from '../response.interface';
-import { ResponseProblem } from '../models/response-problem';
+import { Response } from '../models/response.interface';
+import { ResponseProblem } from '../models/response.problem';
 import { LoggerService } from './logger.service';
 import {
   ResultException,

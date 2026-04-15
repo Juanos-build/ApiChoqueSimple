@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResponseHelper = void 0;
 const common_1 = require("@nestjs/common");
-const response_problem_1 = require("../models/response-problem");
+const response_problem_1 = require("../models/response.problem");
 const logger_service_1 = require("./logger.service");
 const app_exceptions_1 = require("../exceptions/app.exceptions");
 let ResponseHelper = class ResponseHelper {

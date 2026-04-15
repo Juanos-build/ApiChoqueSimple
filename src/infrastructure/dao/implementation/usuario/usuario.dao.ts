@@ -1,5 +1,5 @@
 import * as sql from 'mssql';
-import { Response } from '../../../../common/response.interface';
+import { Response } from '../../../../common/models/response.interface';
 import { IUsuarioDao } from '../../interfaces/usuario.dao.interface';
 import { UsuarioExtend, Usuario } from '../../../entities/usuario.entity';
 import {
@@ -17,7 +17,9 @@ export class UsuarioDao extends BaseDao implements IUsuarioDao {
     super();
   }
 
-  async obtenerUsuario(request: Usuario): Promise<Response<UsuarioExtend>> {
+  async obtenerUsuario(
+    request: Usuario,
+  ): Promise<Response<UsuarioExtend | null>> {
     return this.safeExecute(async () => {
       const transaction = getCurrentTransaction();
       const inputs = [

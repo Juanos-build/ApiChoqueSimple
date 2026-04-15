@@ -1,14 +1,16 @@
-/* eslint-disable */
 import * as sql from 'mssql';
-import { PROPS_KEY } from '../decorators/field.decorator'
+import { PROPS_KEY } from '../decorators/field.decorator';
 
 type SqlValue = string | number | boolean | Date | Buffer | null | undefined;
 
 export class TableConverter {
-  static toTvp<T>(entity: Partial<T>, type: new () => T): sql.Table {
+  static toTvp<T extends object>(
+    entity: Partial<T>,
+    type: new () => T,
+  ): sql.Table {
     const tvp = new sql.Table();
 
-    const props: string[] = Reflect.getMetadata(PROPS_KEY, type) || [];
+    const props = getAllProps(type);
 
     // columnas
     for (const key of props) {
@@ -16,7 +18,10 @@ export class TableConverter {
     }
 
     // fila
-    const row = props.map((key) => (entity as any)?.[key] ?? null);
+    const row: SqlValue[] = props.map((key) => {
+      const value = (entity as Record<string, unknown>)[key];
+      return (value ?? null) as SqlValue;
+    });
 
     tvp.rows.add(...row);
 
@@ -84,4 +89,10 @@ export class TableConverter {
         return sql.NVarChar(sql.MAX);
     }
   }
+}
+
+function getAllProps(target: object): string[] {
+  const props = (Reflect.getOwnMetadata(PROPS_KEY, target) as string[]) || [];
+
+  return [...new Set(props)];
 }

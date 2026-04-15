@@ -39,11 +39,14 @@ const field_decorator_1 = require("../decorators/field.decorator");
 class TableConverter {
     static toTvp(entity, type) {
         const tvp = new sql.Table();
-        const props = Reflect.getMetadata(field_decorator_1.PROPS_KEY, type) || [];
+        const props = getAllProps(type);
         for (const key of props) {
             tvp.columns.add(key, sql.NVarChar(sql.MAX));
         }
-        const row = props.map((key) => entity?.[key] ?? null);
+        const row = props.map((key) => {
+            const value = entity[key];
+            return (value ?? null);
+        });
         tvp.rows.add(...row);
         return tvp;
     }
@@ -91,4 +94,8 @@ class TableConverter {
     }
 }
 exports.TableConverter = TableConverter;
+function getAllProps(target) {
+    const props = Reflect.getOwnMetadata(field_decorator_1.PROPS_KEY, target) || [];
+    return [...new Set(props)];
+}
 //# sourceMappingURL=table-converter.helper.js.map

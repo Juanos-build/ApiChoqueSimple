@@ -1,5 +1,5 @@
-import { Response } from '../response.interface';
-import { ResponseProblem } from '../models/response-problem';
+import { Response } from '../models/response.interface';
+import { ResponseProblem } from '../models/response.problem';
 import { LoggerService } from './logger.service';
 import { ResultException, BusinessException, DataAccessException, UnexpectedException, TechnicalException, AppException } from '../exceptions/app.exceptions';
 export declare class ResponseHelper {
