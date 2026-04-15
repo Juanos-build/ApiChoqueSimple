@@ -1,12 +1,12 @@
 import * as sql from 'mssql';
-import { Response } from '../../../common/response.interface';
-import { IUsuarioDao } from '../interfaces/usuario.dao.interface';
-import { UsuarioExtend, Usuario } from '../../entities/usuario.entity';
+import { Response } from '../../../../common/models/response.interface';
+import { IUsuarioDao } from '../../interfaces/usuario.dao.interface';
+import { UsuarioExtend, Usuario } from '../../../entities/usuario.entity';
 import {
   DatabaseService,
   getCurrentTransaction,
-} from '../../database/database.service';
-import { TableConverter } from '../../../common/helpers/table-converter.helper';
+} from '../../../database/database.service';
+import { TableConverter } from '../../../../common/helpers/table-converter.helper';
 import { mapFromDb } from 'src/common/helpers/mapper.helper';
 import { BaseDao } from 'src/infrastructure/database/base.dao';
 import { Dao } from 'src/common/decorators/class.decorator';
@@ -17,7 +17,9 @@ export class UsuarioDao extends BaseDao implements IUsuarioDao {
     super();
   }
 
-  async obtenerUsuario(request: Usuario): Promise<Response<UsuarioExtend>> {
+  async obtenerUsuario(
+    request: Usuario,
+  ): Promise<Response<UsuarioExtend | null>> {
     return this.safeExecute(async () => {
       const transaction = getCurrentTransaction();
       const inputs = [

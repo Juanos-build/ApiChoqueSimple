@@ -1,9 +1,8 @@
-import { Response } from '../../common/response.interface';
-import {
-  UsuarioExtend,
-  Usuario,
-} from '../../infrastructure/entities/usuario.entity';
+import { Response, Request } from '../../common/models/response.interface';
+import { UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
 
 export interface IUsuarioService {
-  obtenerUsuario(request: Usuario): Promise<Response<UsuarioExtend>>;
+  obtenerUsuario(
+    request: Request<UsuarioExtend>,
+  ): Promise<Response<UsuarioExtend | null>>;
 }

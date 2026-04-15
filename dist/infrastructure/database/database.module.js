@@ -15,9 +15,8 @@ const config_1 = require("@nestjs/config");
 const database_config_1 = __importDefault(require("./database.config"));
 const database_service_1 = require("./database.service");
 const transaction_service_1 = require("../dao/transaction.service");
-const dao_container_1 = require("./dao.container");
 const transaction_interceptor_1 = require("../../common/interceptors/transaction.interceptor");
-const dao_provider_1 = require("./dao.provider");
+const usuario_dao_module_1 = require("../dao/implementation/usuario/usuario.dao.module");
 let DatabaseModule = class DatabaseModule {
 };
 exports.DatabaseModule = DatabaseModule;
@@ -26,13 +25,12 @@ exports.DatabaseModule = DatabaseModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forFeature(database_config_1.default),
+            usuario_dao_module_1.UsuarioDaoModule,
         ],
         providers: [
             database_service_1.DatabaseService,
             transaction_service_1.TransactionService,
             transaction_interceptor_1.TransactionalInterceptor,
-            dao_container_1.DaoContainer,
-            ...dao_provider_1.DAO_PROVIDERS,
         ],
         exports: [database_service_1.DatabaseService, transaction_service_1.TransactionService],
     })

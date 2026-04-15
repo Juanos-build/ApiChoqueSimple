@@ -1,9 +1,10 @@
 import { TransactionService } from '../../infrastructure/dao/transaction.service';
 import { IUsuarioService } from '../interfaces/usuario.service.interface';
-import { Response } from '../../common/response.interface';
-import { UsuarioExtend, Usuario } from '../../infrastructure/entities/usuario.entity';
+import { Response } from '../../common/models/response.interface';
+import { UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
+import { Request } from '../../common/models/response.interface';
 export declare class UsuarioService implements IUsuarioService {
     private readonly transactionService;
     constructor(transactionService: TransactionService);
-    obtenerUsuario(request: Usuario): Promise<Response<UsuarioExtend>>;
+    obtenerUsuario(request: Request<UsuarioExtend>): Promise<Response<UsuarioExtend | null>>;
 }

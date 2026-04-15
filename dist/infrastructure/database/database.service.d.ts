@@ -1,7 +1,7 @@
 import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as sql from 'mssql';
-import { Response } from '../../common/response.interface';
+import { Response } from '../../common/models/response.interface';
 import { AsyncLocalStorage } from 'async_hooks';
 export declare const transactionContext: AsyncLocalStorage<sql.Transaction>;
 export declare class DatabaseService implements OnModuleInit, OnModuleDestroy {
