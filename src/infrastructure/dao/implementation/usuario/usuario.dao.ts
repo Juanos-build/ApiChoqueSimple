@@ -5,7 +5,7 @@ import {
   DatabaseService,
   getCurrentTransaction,
 } from '../../../database/database.service';
-import { TableConverter } from '../../../../common/helpers/table-converter.helper';
+import { TableConverter } from '../../../../common/helpers/table.converter.helper';
 import { mapFromDb } from 'src/common/helpers/mapper.helper';
 import { BaseDao } from 'src/infrastructure/database/base.dao';
 import { Dao } from 'src/common/decorators/class.decorator';

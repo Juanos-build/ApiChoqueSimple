@@ -35,14 +35,15 @@ async function bootstrap() {
     }),
   );
 
+  const logger = app.get(LoggerService);
+
   app.useGlobalInterceptors(
-    new TransformInterceptor(),
     app.get(TransactionalInterceptor),
+    new TransformInterceptor(),
   );
 
   app.enableCors();
 
-  const logger = app.get(LoggerService);
   app.useGlobalFilters(new AllExceptionsFilter(logger));
 
   // Swagger

@@ -5,9 +5,11 @@ export function TypedBody() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
+      forbidNonWhitelisted: false,
       transformOptions: {
         enableImplicitConversion: true,
       },
+      validateCustomDecorators: true,
     }),
   );
 }

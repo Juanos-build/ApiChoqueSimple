@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { Response as ExpressResponse } from 'express';
+import { Request, Response as ExpressResponse } from 'express';
 import { ResponseProblem } from '../models/response.problem';
 import { LoggerService } from '../helpers/logger.service';
 import {
@@ -17,6 +17,18 @@ import {
   TechnicalException,
 } from '../exceptions/app.exceptions';
 
+function sanitize(data?: Record<string, unknown>) {
+  if (!data) return data;
+
+  const clone = { ...data };
+
+  delete clone.password;
+  delete clone.clave;
+  delete clone.token;
+
+  return clone;
+}
+
 // Equivale a ErrorHandler + ExceptionToProblemMapper juntos
 @Catch()
 @Injectable()
@@ -26,15 +38,31 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<ExpressResponse>();
-    const request = ctx.getRequest<{ body: unknown }>();
+    const request = ctx.getRequest<Request>();
+    const traceId = String(request.headers['x-trace-id'] ?? '');
 
     const { problem, statusCode } = this.mapException(exception);
 
-    this.logger.error(problem.statusMessage, {
-      eventType: 'GlobalException',
+    this.logger.error('HTTP_ERROR', {
+      traceId,
+      eventType:
+        exception instanceof Error
+          ? exception.constructor.name
+          : 'UnknownException',
+
       title: problem.title,
       statusCode: problem.statusCode,
-      request: request,
+      message: problem.statusMessage,
+
+      // auditoría REAL
+      request: sanitize({
+        body: request.body as Record<string, unknown>,
+        params: request.params,
+        query: request.query,
+      }),
+
+      // debug útil
+      // stack: exception instanceof Error ? exception.stack : undefined,
     });
 
     response.status(statusCode).json(problem);

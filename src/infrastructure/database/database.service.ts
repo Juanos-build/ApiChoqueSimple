@@ -141,7 +141,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Manejo de transacción completa
-   * Equivale exactamente a TransactionHelper.ExecuteInTransactionAsync
    */
   async executeInTransaction<T>(
     action: () => Promise<DbResult<T>>,

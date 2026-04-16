@@ -17,7 +17,7 @@ export class TransactionService {
   ) {}
 
   private async execute<T>(action: () => Promise<DbResult<T>>): Promise<T> {
-    const dbResult = await this.db.executeInTransaction(action);
+    const dbResult = await action();
 
     if (dbResult.statusCode === 0) {
       throw new BusinessException(dbResult.statusMessage);
