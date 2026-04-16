@@ -1,8 +1,7 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiExtraModels } from '@nestjs/swagger';
 import { UsuarioService } from '../../application/services/usuario.service';
 import { UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
-import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { Transactional } from 'src/common/decorators/transaction.decorator';
 import { ApiResponseWrapper } from 'src/common/decorators/response.decorator';
 import {
@@ -11,15 +10,14 @@ import {
 } from 'src/common/decorators/request.decorator';
 import { TypedBody } from 'src/common/decorators/body.decorator';
 import * as responseInterface from 'src/common/models/response.interface';
+import { AuditInterceptor } from 'src/common/interceptors/auditoria.interceptor';
 
+@UseInterceptors(AuditInterceptor)
 @ApiTags('Usuario')
 @ApiExtraModels(UsuarioExtend)
 @Controller('usuario')
 export class UsuarioController {
-  constructor(
-    private readonly usuarioService: UsuarioService,
-    private readonly responseHelper: ResponseHelper,
-  ) {}
+  constructor(private readonly usuarioService: UsuarioService) {}
 
   // Equivale a tu [HttpPost("obtener")]
   @PostOk('obtener')
@@ -28,10 +26,8 @@ export class UsuarioController {
   @ApiOperation({ summary: 'Obtener usuario por filtros' })
   @Transactional()
   async obtenerUsuario(
-    @TypedBody() request: responseInterface.Request<UsuarioExtend>,
+    @TypedBody() request: responseInterface.AppRequest<UsuarioExtend>,
   ) {
-    const result = await this.usuarioService.obtenerUsuario(request);
-    this.responseHelper.success(result, request); // log de éxito
-    return result;
+    return await this.usuarioService.obtenerUsuario(request);
   }
 }
