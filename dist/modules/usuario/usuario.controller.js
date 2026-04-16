@@ -71,7 +71,7 @@ let UsuarioController = class UsuarioController {
 };
 exports.UsuarioController = UsuarioController;
 __decorate([
-    (0, common_1.Post)('obtener'),
+    (0, request_decorator_1.PostOk)('obtener'),
     (0, request_decorator_1.ApiRequestWrapper)(usuario_entity_1.UsuarioExtend),
     (0, response_decorator_1.ApiResponseWrapper)(usuario_entity_1.UsuarioExtend),
     (0, swagger_1.ApiOperation)({ summary: 'Obtener usuario por filtros' }),

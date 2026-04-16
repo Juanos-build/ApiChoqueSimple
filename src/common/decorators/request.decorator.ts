@@ -1,5 +1,15 @@
-import { applyDecorators, Type } from '@nestjs/common';
+import {
+  applyDecorators,
+  Type,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { ApiBody, getSchemaPath } from '@nestjs/swagger';
+
+export function PostOk(path?: string) {
+  return applyDecorators(Post(path), HttpCode(HttpStatus.OK));
+}
 
 export function ApiRequestWrapper<TModel extends Type<any>>(model: TModel) {
   return applyDecorators(

@@ -1,8 +1,9 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as sql from 'mssql';
-import { Response } from '../../common/models/response.interface';
+import { DbResult } from '../../common/models/response.interface';
 import { AsyncLocalStorage } from 'async_hooks';
+import { DataAccessException } from 'src/common/exceptions/app.exceptions';
 
 export const transactionContext = new AsyncLocalStorage<sql.Transaction>();
 
@@ -68,7 +69,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       type: sql.ISqlType | (() => sql.ISqlType);
       value: unknown;
     }[],
-  ): Promise<Response<number>> {
+  ): Promise<DbResult<number>> {
     try {
       const request = new sql.Request(transaction);
 
@@ -85,14 +86,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       return {
         statusCode: result.returnValue as number, // CODIGO (RETURN VALUE del SP)
         statusMessage: result.output['MENSAJE'] as string, // MENSAJE (OUTPUT del SP)
-        result: result.rowsAffected[0],
+        data: result.rowsAffected[0],
       };
     } catch (ex: unknown) {
-      const message = ex instanceof Error ? ex.message : String(ex);
-      return {
-        statusCode: -1,
-        statusMessage: `Error ejecutando SP: ${message}`,
-      };
+      throw new DataAccessException(
+        'Error ejecutando SP',
+        ex instanceof Error ? ex : undefined,
+      );
     }
   }
 
@@ -109,7 +109,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       value: unknown;
     }[],
     readerFunc: (recordsets: sql.IRecordSet<Record<string, unknown>>[]) => T,
-  ): Promise<Response<T>> {
+  ): Promise<DbResult<T>> {
     try {
       const request = new sql.Request(transaction);
 
@@ -129,15 +129,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       return {
         statusCode: result.returnValue as number,
         statusMessage: result.output['MENSAJE'] as string,
-        result: data ?? undefined,
+        data: data ?? undefined,
       };
     } catch (ex: unknown) {
-      const message = ex instanceof Error ? ex.message : String(ex);
-      return {
-        statusCode: -1,
-        statusMessage: `Error ejecutando SP: ${message}`,
-        result: undefined,
-      };
+      throw new DataAccessException(
+        'Error ejecutando SP',
+        ex instanceof Error ? ex : undefined,
+      );
     }
   }
 
@@ -146,8 +144,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    * Equivale exactamente a TransactionHelper.ExecuteInTransactionAsync
    */
   async executeInTransaction<T>(
-    action: () => Promise<Response<T>>,
-  ): Promise<Response<T>> {
+    action: () => Promise<DbResult<T>>,
+  ): Promise<DbResult<T>> {
     const transaction = new sql.Transaction(this.pool);
 
     try {
@@ -155,22 +153,12 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       return await transactionContext.run(transaction, async () => {
         const result = await action();
 
-        if (result.statusCode === 1 || result.statusCode === 2) {
-          await transaction.commit();
-          return result;
-        } else {
-          // Igual que tu ResultException — rollback si el SP devuelve código != 1 o 2
-          await transaction.rollback();
-          return result;
-        }
+        await transaction.commit();
+        return result;
       });
-    } catch (ex: unknown) {
+    } catch (ex) {
       await transaction.rollback();
-      const message = ex instanceof Error ? ex.message : String(ex);
-      return {
-        statusCode: -1,
-        statusMessage: `Error en transacción: ${message}`,
-      };
+      throw ex;
     }
   }
 

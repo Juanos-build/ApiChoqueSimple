@@ -48,6 +48,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const sql = __importStar(require("mssql"));
 const async_hooks_1 = require("async_hooks");
+const app_exceptions_1 = require("../../common/exceptions/app.exceptions");
 exports.transactionContext = new async_hooks_1.AsyncLocalStorage();
 let DatabaseService = class DatabaseService {
     configService;
@@ -95,15 +96,11 @@ let DatabaseService = class DatabaseService {
             return {
                 statusCode: result.returnValue,
                 statusMessage: result.output['MENSAJE'],
-                result: result.rowsAffected[0],
+                data: result.rowsAffected[0],
             };
         }
         catch (ex) {
-            const message = ex instanceof Error ? ex.message : String(ex);
-            return {
-                statusCode: -1,
-                statusMessage: `Error ejecutando SP: ${message}`,
-            };
+            throw new app_exceptions_1.DataAccessException('Error ejecutando SP', ex instanceof Error ? ex : undefined);
         }
     }
     async executeStoreProcedureData(transaction, procedure, inputs, readerFunc) {
@@ -119,16 +116,11 @@ let DatabaseService = class DatabaseService {
             return {
                 statusCode: result.returnValue,
                 statusMessage: result.output['MENSAJE'],
-                result: data ?? undefined,
+                data: data ?? undefined,
             };
         }
         catch (ex) {
-            const message = ex instanceof Error ? ex.message : String(ex);
-            return {
-                statusCode: -1,
-                statusMessage: `Error ejecutando SP: ${message}`,
-                result: undefined,
-            };
+            throw new app_exceptions_1.DataAccessException('Error ejecutando SP', ex instanceof Error ? ex : undefined);
         }
     }
     async executeInTransaction(action) {
@@ -137,23 +129,13 @@ let DatabaseService = class DatabaseService {
             await transaction.begin();
             return await exports.transactionContext.run(transaction, async () => {
                 const result = await action();
-                if (result.statusCode === 1 || result.statusCode === 2) {
-                    await transaction.commit();
-                    return result;
-                }
-                else {
-                    await transaction.rollback();
-                    return result;
-                }
+                await transaction.commit();
+                return result;
             });
         }
         catch (ex) {
             await transaction.rollback();
-            const message = ex instanceof Error ? ex.message : String(ex);
-            return {
-                statusCode: -1,
-                statusMessage: `Error en transacción: ${message}`,
-            };
+            throw ex;
         }
     }
     async executeInTransactionRaw(action) {

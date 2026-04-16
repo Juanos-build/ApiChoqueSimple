@@ -1,9 +1,9 @@
-import { Response } from 'src/common/models/response.interface';
+import { DbResult } from 'src/common/models/response.interface';
 
 export abstract class BaseDao {
   protected async safeExecute<T>(
-    action: () => Promise<Response<T>>,
-  ): Promise<Response<T>> {
+    action: () => Promise<DbResult<T>>,
+  ): Promise<DbResult<T>> {
     try {
       return await action();
     } catch (ex: unknown) {
