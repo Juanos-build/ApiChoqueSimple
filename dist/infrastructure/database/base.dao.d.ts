@@ -1,4 +1,4 @@
-import { Response } from "../../common/models/response.interface";
+import { DbResult } from "../../common/models/response.interface";
 export declare abstract class BaseDao {
-    protected safeExecute<T>(action: () => Promise<Response<T>>): Promise<Response<T>>;
+    protected safeExecute<T>(action: () => Promise<DbResult<T>>): Promise<DbResult<T>>;
 }

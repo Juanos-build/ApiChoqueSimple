@@ -12,3 +12,9 @@ export interface Request<T> {
   platform: string;
   version: string;
 }
+
+export interface DbResult<T> {
+  statusCode: number;
+  statusMessage: string;
+  data?: T;
+}

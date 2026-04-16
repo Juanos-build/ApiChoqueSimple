@@ -21,7 +21,12 @@ let UsuarioService = class UsuarioService {
     }
     async obtenerUsuario(request) {
         const usuario = (0, mapper_helper_1.mapToClass)(usuario_entity_1.Usuario, request.data);
-        return this.transactionService.obtenerUsuario(usuario);
+        const response = await this.transactionService.obtenerUsuario(usuario);
+        return {
+            statusCode: 1,
+            statusMessage: 'OK',
+            result: response,
+        };
     }
 };
 exports.UsuarioService = UsuarioService;

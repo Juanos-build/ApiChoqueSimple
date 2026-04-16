@@ -1,5 +1,4 @@
 import * as sql from 'mssql';
-import { Response } from '../../../../common/models/response.interface';
 import { IUsuarioDao } from '../../interfaces/usuario.dao.interface';
 import { UsuarioExtend, Usuario } from '../../../entities/usuario.entity';
 import {
@@ -10,6 +9,7 @@ import { TableConverter } from '../../../../common/helpers/table-converter.helpe
 import { mapFromDb } from 'src/common/helpers/mapper.helper';
 import { BaseDao } from 'src/infrastructure/database/base.dao';
 import { Dao } from 'src/common/decorators/class.decorator';
+import { DbResult } from 'src/common/models/response.interface';
 
 @Dao()
 export class UsuarioDao extends BaseDao implements IUsuarioDao {
@@ -19,7 +19,7 @@ export class UsuarioDao extends BaseDao implements IUsuarioDao {
 
   async obtenerUsuario(
     request: Usuario,
-  ): Promise<Response<UsuarioExtend | null>> {
+  ): Promise<DbResult<UsuarioExtend | null>> {
     return this.safeExecute(async () => {
       const transaction = getCurrentTransaction();
       const inputs = [
@@ -42,10 +42,7 @@ export class UsuarioDao extends BaseDao implements IUsuarioDao {
       return {
         statusCode: dt.statusCode,
         statusMessage: dt.statusMessage,
-        result:
-          dt.statusCode === 1
-            ? mapFromDb(UsuarioExtend, dt.result)
-            : new UsuarioExtend(),
+        data: dt.data ? mapFromDb(UsuarioExtend, dt.data) : null,
       };
     });
   }

@@ -18,6 +18,12 @@ export class UsuarioService implements IUsuarioService {
     request: Request<UsuarioExtend>,
   ): Promise<Response<UsuarioExtend | null>> {
     const usuario = mapToClass(Usuario, request.data);
-    return this.transactionService.obtenerUsuario(usuario);
+    const response = await this.transactionService.obtenerUsuario(usuario);
+
+    return {
+      statusCode: 1,
+      statusMessage: 'OK',
+      result: response,
+    };
   }
 }

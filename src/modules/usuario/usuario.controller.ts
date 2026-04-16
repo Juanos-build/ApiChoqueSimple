@@ -1,11 +1,14 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiExtraModels } from '@nestjs/swagger';
 import { UsuarioService } from '../../application/services/usuario.service';
 import { UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { Transactional } from 'src/common/decorators/transaction.decorator';
 import { ApiResponseWrapper } from 'src/common/decorators/response.decorator';
-import { ApiRequestWrapper } from 'src/common/decorators/request.decorator';
+import {
+  ApiRequestWrapper,
+  PostOk,
+} from 'src/common/decorators/request.decorator';
 import { TypedBody } from 'src/common/decorators/body.decorator';
 import * as responseInterface from 'src/common/models/response.interface';
 
@@ -19,7 +22,7 @@ export class UsuarioController {
   ) {}
 
   // Equivale a tu [HttpPost("obtener")]
-  @Post('obtener')
+  @PostOk('obtener')
   @ApiRequestWrapper(UsuarioExtend)
   @ApiResponseWrapper(UsuarioExtend)
   @ApiOperation({ summary: 'Obtener usuario por filtros' })
