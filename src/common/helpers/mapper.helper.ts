@@ -1,25 +1,10 @@
-// import { plainToInstance } from 'class-transformer';
 import { pascalToCamelCase } from 'src/common/interceptors/transform.interceptor';
-
-import 'reflect-metadata';
 import { PROPS_KEY } from 'src/common/decorators/field.decorator';
-
-// export function mapToClass<T, V>(cls: new () => T, data: V): T {
-//   return plainToInstance(cls, data, {
-//     excludeExtraneousValues: false,
-//   });
-// }
-
-// export function mapFromDb<T, V>(cls: new () => T, data: V): T {
-//   const normalized = pascalToCamelCase(data);
-
-//   return plainToInstance(cls, normalized);
-// }
+import 'reflect-metadata';
 
 function getProps(target: object): string[] {
-  const props = Reflect.getMetadata(PROPS_KEY, target) as unknown;
-
-  return Array.isArray(props) ? (props as string[]) : [];
+  const props = Reflect.getMetadata(PROPS_KEY, target) as string[] | undefined;
+  return props ?? [];
 }
 
 function getAllProps(target: unknown): string[] {

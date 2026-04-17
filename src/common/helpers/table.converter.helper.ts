@@ -1,5 +1,5 @@
 import * as sql from 'mssql';
-import { PROPS_KEY } from '../decorators/field.decorator';
+import { COLUMN_TYPE_KEY, PROPS_KEY } from '../decorators/field.decorator';
 
 type SqlValue = string | number | boolean | Date | Buffer | null | undefined;
 
@@ -14,7 +14,14 @@ export class TableConverter {
 
     // columnas
     for (const key of props) {
-      tvp.columns.add(key, sql.NVarChar(sql.MAX));
+      tvp.columns.add(
+        key,
+        getSqlType(
+          type,
+          key,
+          (entity as Record<string, unknown>)[key] as SqlValue,
+        ),
+      );
     }
 
     // fila
@@ -45,33 +52,88 @@ export class TableConverter {
     return tvp;
   }
 
-  /**
-   * Equivale a ToDataTable<T>(List<T> items)
-   */
-  static listToTvp<T extends object>(items: T[]): sql.Table {
+  static listToTvp<T extends object>(items: T[], type: new () => T): sql.Table {
     const list = items ?? [];
     const tvp = new sql.Table();
 
     if (list.length === 0) return tvp;
 
-    const entries = Object.entries(list[0]);
+    const props = getAllProps(type);
 
-    for (const [key, value] of entries) {
-      tvp.columns.add(key, TableConverter.inferSqlType(value as SqlValue));
+    // columnas
+    for (const key of props) {
+      tvp.columns.add(
+        key,
+        getSqlType(
+          type,
+          key,
+          (list[0] as Record<string, unknown>)?.[key] as SqlValue,
+        ),
+      );
     }
 
+    // filas
     for (const item of list) {
-      tvp.rows.add(...Object.values(item).map((v) => (v ?? null) as SqlValue));
+      const row: SqlValue[] = props.map((key) => {
+        const value = (item as Record<string, unknown>)[key];
+        return (value ?? null) as SqlValue;
+      });
+
+      tvp.rows.add(...row);
     }
 
     return tvp;
   }
 
+  static toTvpList<T extends object>(items: T[], type: new () => T): sql.Table {
+    const list = items ?? [];
+    const tvp = new sql.Table();
+
+    if (list.length === 0) return tvp;
+
+    const props = getAllProps(type);
+
+    // columnas (igual que toTvp)
+    for (const key of props) {
+      tvp.columns.add(
+        key,
+        getSqlType(
+          type,
+          key,
+          (list[0] as Record<string, unknown>)?.[key] as SqlValue,
+        ),
+      );
+    }
+
+    // filas
+    for (const item of list) {
+      const row: SqlValue[] = props.map((key) => {
+        const value = (item as Record<string, unknown>)[key];
+        return (value ?? null) as SqlValue;
+      });
+
+      tvp.rows.add(...row);
+    }
+
+    return tvp;
+  }
+
+  static toTvpAuto<T extends object>(
+    data: T | T[],
+    type: new () => T,
+  ): sql.Table {
+    if (Array.isArray(data)) {
+      return TableConverter.toTvpList(data, type);
+    }
+
+    return TableConverter.toTvp(data, type);
+  }
+
   /**
    * Infiere el tipo SQL según el tipo JS del valor
    */
-  private static inferSqlType(
-    value: SqlValue,
+  protected static inferSqlType(
+    value?: SqlValue,
   ): sql.ISqlType | (() => sql.ISqlType) {
     if (value === null || value === undefined) return sql.NVarChar(sql.MAX);
 
@@ -89,10 +151,31 @@ export class TableConverter {
         return sql.NVarChar(sql.MAX);
     }
   }
+
+  static resolveSqlType(value?: SqlValue): sql.ISqlType | (() => sql.ISqlType) {
+    return this.inferSqlType(value);
+  }
 }
 
 function getAllProps(target: object): string[] {
   const props = (Reflect.getOwnMetadata(PROPS_KEY, target) as string[]) || [];
 
   return [...new Set(props)];
+}
+
+function getSqlType<T extends object>(
+  target: new () => T,
+  key: string,
+  sampleValue?: SqlValue,
+): sql.ISqlType | (() => sql.ISqlType) {
+  const metadata = Reflect.getOwnMetadata(COLUMN_TYPE_KEY, target as object) as
+    | Record<string, sql.ISqlType | (() => sql.ISqlType)>
+    | undefined;
+
+  const configuredType = metadata?.[key];
+
+  if (configuredType) return configuredType;
+
+  // fallback a inferencia actual (no rompe nada)
+  return TableConverter.resolveSqlType(sampleValue);
 }

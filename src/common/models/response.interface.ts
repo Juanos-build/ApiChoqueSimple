@@ -6,11 +6,11 @@ export interface AppResponse<T> {
 
 export interface AppRequest<T> {
   data: T;
-  idAplicacion: number;
-  idVersion: number;
-  language: string;
-  platform: string;
-  version: string;
+  idAplicacion?: number;
+  idVersion?: number;
+  language?: string;
+  platform?: string;
+  version?: string;
 }
 
 export interface DbResult<T> {

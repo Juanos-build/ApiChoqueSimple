@@ -2,18 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { DbResult } from '../../common/models/response.interface';
 import { UsuarioExtend, Usuario } from '../entities/usuario.entity';
 import { UsuarioDao } from './implementation/usuario/usuario.dao';
-import { DatabaseService } from '../database/database.service';
 import {
   BusinessException,
   DataAccessException,
   TechnicalException,
 } from 'src/common/exceptions/app.exceptions';
+import { LoginDao } from './implementation/login/login.auth.dao';
+import {
+  UsuarioLogin,
+  UsuarioLoginExtended,
+} from '../entities/usuario.login.entity';
 
 @Injectable()
 export class TransactionService {
   constructor(
-    private readonly db: DatabaseService,
     private readonly usuarioDao: UsuarioDao,
+    private readonly loginDao: LoginDao,
   ) {}
 
   private async execute<T>(action: () => Promise<DbResult<T>>): Promise<T> {
@@ -34,8 +38,19 @@ export class TransactionService {
     return dbResult.data as T;
   }
 
-  // Equivale a: ObtenerUsuario en TransactionDao.cs
   async obtenerUsuario(request: Usuario): Promise<UsuarioExtend | null> {
     return this.execute(() => this.usuarioDao.obtenerUsuario(request));
+  }
+
+  async obtenerUsuarioLogin(
+    request: UsuarioLogin,
+  ): Promise<UsuarioLoginExtended[] | null> {
+    return this.execute(() => this.loginDao.obtenerUsuarioLogin(request));
+  }
+
+  async registrarUsuarioLogin(
+    request: UsuarioLogin[],
+  ): Promise<UsuarioLogin | null> {
+    return this.execute(() => this.loginDao.registrarUsuarioLogin(request));
   }
 }

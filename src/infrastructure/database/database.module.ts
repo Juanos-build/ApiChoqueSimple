@@ -1,10 +1,11 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import databaseConfig from './database.config';
+import databaseConfig from '../../common/settings/database.config';
 import { DatabaseService } from './database.service';
 import { TransactionService } from '../dao/transaction.service';
 import { TransactionalInterceptor } from 'src/common/interceptors/transaction.interceptor';
 import { UsuarioDaoModule } from '../dao/implementation/usuario/usuario.dao.module';
+import { LoginDaoModule } from '../dao/implementation/login/login.auth.dao.module';
 
 // @Global() — equivale a AddSingleton — disponible en TODA la app
 // sin necesidad de importarlo en cada módulo
@@ -14,6 +15,7 @@ import { UsuarioDaoModule } from '../dao/implementation/usuario/usuario.dao.modu
     // Carga la config de BD como namespace — equivale a IOptions<DatabaseConfig>
     ConfigModule.forFeature(databaseConfig),
     UsuarioDaoModule,
+    LoginDaoModule,
   ],
   providers: [
     // Equivale a services.AddSingleton<IConnectionFactory, ConnectionFactory>()

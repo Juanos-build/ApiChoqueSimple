@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionService } from '../../infrastructure/dao/transaction.service';
-import { IUsuarioService } from '../interfaces/usuario.service.interface';
 import { AppResponse } from '../../common/models/response.interface';
 import {
   Usuario,
@@ -10,7 +9,7 @@ import { mapToClass } from 'src/common/helpers/mapper.helper';
 import { AppRequest } from '../../common/models/response.interface';
 
 @Injectable()
-export class UsuarioService implements IUsuarioService {
+export class UsuarioService {
   // Equivale a inyectar ITransactionDao en el servicio .NET
   constructor(private readonly transactionService: TransactionService) {}
 

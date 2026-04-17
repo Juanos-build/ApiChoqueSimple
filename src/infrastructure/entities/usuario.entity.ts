@@ -1,11 +1,12 @@
 import { Field } from 'src/common/decorators/field.decorator';
 import { Exclude } from 'class-transformer';
+import { UsuarioLoginExtended } from './usuario.login.entity';
 
 // Equivale a tu clase Usuario.cs y UsuarioExtend.cs
 export class Usuario {
   @Field()
   idUsuario?: number;
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   @Field()
   clave?: string;
   @Field()
@@ -55,6 +56,22 @@ export class Usuario {
 export class UsuarioExtend extends Usuario {
   @Field()
   rol?: string;
+
   @Field({ example: '2024-01-01T00:00:00' })
   fechaCreacion?: Date;
+
+  @Field()
+  token?: string;
+
+  @Field()
+  idAplicacion?: number;
+
+  @Field()
+  clienteExiste?: number;
+
+  @Exclude({ toPlainOnly: true }) // Equivale a [JsonIgnore]
+  refreshToken?: string;
+
+  @Exclude({ toPlainOnly: true }) // Equivale a [JsonIgnore]
+  refreshTokens: UsuarioLoginExtended[] = [];
 }
