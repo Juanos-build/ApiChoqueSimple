@@ -5,7 +5,6 @@ import { UsuarioDao } from './implementation/usuario/usuario.dao';
 import {
   BusinessException,
   DataAccessException,
-  TechnicalException,
 } from 'src/common/exceptions/app.exceptions';
 import { LoginDao } from './implementation/login/login.auth.dao';
 import {
@@ -31,11 +30,7 @@ export class TransactionService {
       throw new DataAccessException(dbResult.statusMessage);
     }
 
-    if (!dbResult.data) {
-      throw new TechnicalException('Data undefined');
-    }
-
-    return dbResult.data as T;
+    return (dbResult.data ?? null) as T;
   }
 
   async obtenerUsuario(request: Usuario): Promise<UsuarioExtend | null> {
@@ -48,9 +43,7 @@ export class TransactionService {
     return this.execute(() => this.loginDao.obtenerUsuarioLogin(request));
   }
 
-  async registrarUsuarioLogin(
-    request: UsuarioLogin[],
-  ): Promise<UsuarioLogin | null> {
+  async registrarUsuarioLogin(request: UsuarioLogin[]): Promise<number> {
     return this.execute(() => this.loginDao.registrarUsuarioLogin(request));
   }
 }

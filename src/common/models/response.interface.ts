@@ -16,7 +16,7 @@ export interface AppRequest<T> {
 export interface DbResult<T> {
   statusCode: number;
   statusMessage: string;
-  data?: T;
+  data?: T | null;
 }
 
 export interface AuthUser {

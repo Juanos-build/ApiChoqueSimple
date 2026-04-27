@@ -7,6 +7,7 @@ import {
 } from '../../infrastructure/entities/usuario.entity';
 import { mapToClass } from 'src/common/helpers/mapper.helper';
 import { AppRequest } from '../../common/models/response.interface';
+import { BusinessException } from 'src/common/exceptions/app.exceptions';
 
 @Injectable()
 export class UsuarioService {
@@ -18,6 +19,9 @@ export class UsuarioService {
   ): Promise<AppResponse<UsuarioExtend | null>> {
     const usuario = mapToClass(Usuario, request.data ?? {});
     const response = await this.transactionService.obtenerUsuario(usuario);
+
+    if (response === null)
+      throw new BusinessException('no se enontraron datos');
 
     return {
       statusCode: 1,

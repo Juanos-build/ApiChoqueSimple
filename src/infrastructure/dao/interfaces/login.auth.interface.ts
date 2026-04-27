@@ -11,7 +11,5 @@ export interface ILoginDao {
   ): Promise<DbResult<UsuarioLoginExtended[] | null>>;
 
   // persiste refresh tokens rotados
-  registrarUsuarioLogin(
-    request: UsuarioLogin[],
-  ): Promise<DbResult<UsuarioLogin | null>>;
+  registrarUsuarioLogin(request: UsuarioLogin[]): Promise<DbResult<number>>;
 }

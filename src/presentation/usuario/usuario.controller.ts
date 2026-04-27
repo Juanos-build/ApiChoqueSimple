@@ -1,5 +1,10 @@
-import { Controller, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiExtraModels } from '@nestjs/swagger';
+import { Controller, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiExtraModels,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UsuarioService } from '../../application/services/usuario.service';
 import { UsuarioExtend } from '../../infrastructure/entities/usuario.entity';
 import { Transactional } from 'src/common/decorators/transaction.decorator';
@@ -11,6 +16,7 @@ import {
 import { TypedBody } from 'src/common/decorators/body.decorator';
 import * as responseInterface from 'src/common/models/response.interface';
 import { AuditInterceptor } from 'src/common/interceptors/auditoria.interceptor';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 
 @UseInterceptors(AuditInterceptor)
 @ApiTags('Usuario')
@@ -19,7 +25,8 @@ import { AuditInterceptor } from 'src/common/interceptors/auditoria.interceptor'
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
-  // Equivale a tu [HttpPost("obtener")]
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @PostOk('obtener')
   @ApiRequestWrapper(UsuarioExtend)
   @ApiResponseWrapper(UsuarioExtend)

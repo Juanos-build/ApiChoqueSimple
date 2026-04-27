@@ -59,7 +59,7 @@ export class LoginDao extends BaseDao implements ILoginDao {
 
   async registrarUsuarioLogin(
     request: UsuarioLogin[],
-  ): Promise<DbResult<UsuarioLogin | null>> {
+  ): Promise<DbResult<number>> {
     return this.safeExecute(async () => {
       const transaction = getCurrentTransaction();
 
@@ -72,21 +72,11 @@ export class LoginDao extends BaseDao implements ILoginDao {
         },
       ];
 
-      const dt = await this.db.executeStoreProcedureData<UsuarioLogin | null>(
+      return await this.db.executeStoreProcedureParams(
         transaction,
         'SP_SET_USUARIO_LOGIN',
         inputs,
-        (recordsets) => (recordsets[0]?.[0] as unknown as UsuarioLogin) ?? null,
       );
-
-      return {
-        statusCode: dt.statusCode,
-        statusMessage: dt.statusMessage,
-        data:
-          dt.statusCode === 1 && dt.data
-            ? mapFromDb(UsuarioLogin, dt.data)
-            : null,
-      };
     });
   }
 }
