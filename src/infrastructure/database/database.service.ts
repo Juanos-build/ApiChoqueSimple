@@ -124,12 +124,16 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       const recordsets = result.recordsets as sql.IRecordSet<
         Record<string, unknown>
       >[];
-      const data = readerFunc ? readerFunc(recordsets) : null;
+
+      const hasData =
+        recordsets && recordsets.some((rs) => rs && rs.length > 0);
+
+      const data = hasData && readerFunc ? readerFunc(recordsets) : null;
 
       return {
         statusCode: result.returnValue as number,
         statusMessage: result.output['MENSAJE'] as string,
-        data: data ?? undefined,
+        data: data,
       };
     } catch (ex: unknown) {
       throw new DataAccessException(
